@@ -307,6 +307,7 @@ func UpdatePassword(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname 
 		return ReturnStruct(response)
 	}
 
+	user.Nomor = auth.Nomor
 	user.Name = user.Username
 	user.Role = "user"
 	HashPassword(user.Password)
