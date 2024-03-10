@@ -224,6 +224,59 @@ func UpdateBlogAPI(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, kursussalon.UpdateBlog("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "blog", r))
 }
+
+func AddedQuestionAndAnswer(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+	}
+	fmt.Fprintf(w, kursussalon.AddedQuestionAndAnswer("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "questionandanswer", r))
+}
+
+func AddedAnswerQuestion(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+	}
+	fmt.Fprintf(w, kursussalon.CekAnswer("mongoenvkatalogfilm", "katalogfilm", "questionandanswer", r))
+}
+
+func updatedAnsweQurstion(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+	}
+	fmt.Fprintf(w, kursussalon.UpdatedAnswer("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "questionandanswer", r))
+}
+
+func GetallQuestionAndAnswer(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+
+	}
+	fmt.Fprintf(w, kursussalon.GetFindAll("mongoenvkatalogfilm", "katalogfilm", "questionandanswer", r))
+}
+
+func DeleteQuestionAndAnswer(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+
+	}
+	fmt.Fprintf(w, kursussalon.DeleteAnswer("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "questionandanswer", r))
+}
+
 func handlerRequests() {
 	http.HandleFunc("/AuthorizationAPI", AuthorizationAPI)
 	http.HandleFunc("/RegistrasiAPI", RegistrasiAPI)
@@ -243,6 +296,11 @@ func handlerRequests() {
 	http.HandleFunc("/FindallBlogAPI", FindallBlogAPI)
 	http.HandleFunc("/DeleteBlogAPI", DeleteBlogAPI)
 	http.HandleFunc("/UpdateBlogAPI", UpdateBlogAPI)
+	http.HandleFunc("/AddedQuestionAndAnswer", AddedQuestionAndAnswer)
+	http.HandleFunc("/GetQuestionAndAnswer", AddedAnswerQuestion)
+	http.HandleFunc("/UpdatedAnswer", updatedAnsweQurstion)
+	http.HandleFunc("/GetallQuestionAndAnswer", GetallQuestionAndAnswer)
+	http.HandleFunc("/DeleteQuestionAndAnswer", DeleteQuestionAndAnswer)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
