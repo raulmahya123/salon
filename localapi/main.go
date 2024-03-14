@@ -277,6 +277,28 @@ func DeleteQuestionAndAnswer(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, kursussalon.DeleteAnswer("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "questionandanswer", r))
 }
 
+func ClaimsSalon(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+
+	}
+	fmt.Fprintf(w, kursussalon.ClaimsSalon("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "claims", r))
+}
+
+func ClaimsCertificate(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+
+	}
+	fmt.Fprintf(w, kursussalon.GetClaimsSalon("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "claims", r))
+}
+
 func handlerRequests() {
 	http.HandleFunc("/AuthorizationAPI", AuthorizationAPI)
 	http.HandleFunc("/RegistrasiAPI", RegistrasiAPI)
@@ -301,6 +323,9 @@ func handlerRequests() {
 	http.HandleFunc("/UpdatedAnswer", updatedAnsweQurstion)
 	http.HandleFunc("/GetallQuestionAndAnswer", GetallQuestionAndAnswer)
 	http.HandleFunc("/DeleteQuestionAndAnswer", DeleteQuestionAndAnswer)
+	http.HandleFunc("/ClaimsSalon", ClaimsSalon)
+
+	http.HandleFunc("/ClaimsCertificate", ClaimsCertificate)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

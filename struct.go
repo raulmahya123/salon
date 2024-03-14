@@ -2,6 +2,8 @@ package kursussalon
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Payload struct {
@@ -42,22 +44,24 @@ type Pesan struct {
 	Nomor   string      `json:"nomor,omitempty" bson:"nomor,omitempty"`
 }
 type Salon struct {
-	ID      string `json:"id" bson:"id"`
-	Name    string `json:"name" bson:"name"`
-	Author  string `json:"author" bson:"author"`
-	Salon1  string `json:"salon1" bson:"salon1"`
-	Salon2  string `json:"salon2" bson:"salon2"`
-	Salon3  string `json:"salon3" bson:"salon3"`
-	Salon4  string `json:"salon4" bson:"salon4"`
-	Salon5  string `json:"salon5" bson:"salon5"`
-	Salon6  string `json:"salon6" bson:"salon6"`
-	Salon7  string `json:"salon7" bson:"salon7"`
-	Salon8  string `json:"salon8" bson:"salon8"`
-	Salon9  string `json:"salon9" bson:"salon9"`
-	Salon10 string `json:"salon10" bson:"salon10"`
-	Salon11 string `json:"salon11" bson:"salon11"`
-	Salon12 string `json:"salon12" bson:"salon12"`
-	Status  bool   `json:"status" bson:"status"`
+	ID           string `json:"id" bson:"id"`
+	Name         string `json:"name" bson:"name"`
+	Author       string `json:"author" bson:"author"`
+	Salon1       string `json:"salon1" bson:"salon1"`
+	Salon2       string `json:"salon2" bson:"salon2"`
+	Salon3       string `json:"salon3" bson:"salon3"`
+	Salon4       string `json:"salon4" bson:"salon4"`
+	Salon5       string `json:"salon5" bson:"salon5"`
+	Salon6       string `json:"salon6" bson:"salon6"`
+	Salon7       string `json:"salon7" bson:"salon7"`
+	Salon8       string `json:"salon8" bson:"salon8"`
+	Salon9       string `json:"salon9" bson:"salon9"`
+	Salon10      string `json:"salon10" bson:"salon10"`
+	Salon11      string `json:"salon11" bson:"salon11"`
+	Salon12      string `json:"salon12" bson:"salon12"`
+	Status       bool   `json:"status" bson:"status"`
+	Image        string `json:"image" bson:"image"`
+	Nomor_claims string `json:"nomor_claims" bson:"nomor_claims"`
 }
 
 type Certificate struct {
@@ -84,4 +88,18 @@ type Response struct {
 	Status  bool        `json:"status" bson:"status"`
 	Message string      `json:"message" bson:"message"`
 	Data    interface{} `json:"data" bson:"data"`
+}
+
+type QuestionAndAnswer struct {
+	ID            int      `json:"id" bson:"id"`
+	Question      string   `json:"question" bson:"question"`
+	Answers       []string `json:"answers" bson:"answers"`
+	CorrectAnswer string   `json:"correct_answer" bson:"correct_answer"`
+	Status        bool     `json:"status" bson:"status"`
+}
+
+type History struct {
+	ID          primitive.ObjectID `json:"id" bson:"_id"`
+	Salon       []Salon            `json:"salon" bson:"salon"`
+	Certificate []Certificate      `json:"certificate" bson:"certificate"`
 }

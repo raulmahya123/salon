@@ -2,11 +2,13 @@ package kursussalon
 
 import (
 	"context"
+	"log"
 	"os"
 
 	"github.com/aiteung/atdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func SetConnection(mongoenvkatalogfilm, dbname string) *mongo.Database {
@@ -143,4 +145,91 @@ func DeleteBlog(mconn *mongo.Database, collname string, datablog Blog) interface
 func UpdatedBlog(mconn *mongo.Database, collname string, datablog Blog) interface{} {
 	filter := bson.M{"id": datablog.ID}
 	return atdb.ReplaceOneDoc(mconn, collname, filter, datablog)
+}
+
+func InsertQuestionAndAnswer(mconn *mongo.Database, collname string, dataquestion QuestionAndAnswer) interface{} {
+	return atdb.InsertOneDoc(mconn, collname, dataquestion)
+}
+
+func CheckAnswerdb(mconn *mongo.Database, collname string, dataquestion QuestionAndAnswer) QuestionAndAnswer {
+	filter := bson.M{"correct_answer": dataquestion.CorrectAnswer}
+	return atdb.GetOneDoc[QuestionAndAnswer](mconn, collname, filter)
+}
+
+func FindallQuestionAndAnswer(mconn *mongo.Database, collname string) []QuestionAndAnswer {
+	question := atdb.GetAllDoc[[]QuestionAndAnswer](mconn, collname)
+	return question
+}
+
+func UpdatedAnswerdb(mconn *mongo.Database, collname string, dataquestion QuestionAndAnswer) interface{} {
+	filter := bson.M{"id": dataquestion.ID}
+	return atdb.ReplaceOneDoc(mconn, collname, filter, dataquestion)
+}
+
+func DeleteAnswerdb(mconn *mongo.Database, collname string, dataquestion QuestionAndAnswer) interface{} {
+	filter := bson.M{"id": dataquestion.ID}
+	return atdb.DeleteOneDoc(mconn, collname, filter)
+}
+
+func FindallHistorySalon(mconn *mongo.Database, collname string) []History {
+	history := atdb.GetAllDoc[[]History](mconn, collname)
+	return history
+}
+
+func ClaimsSalondb(mconn *mongo.Database, collname string, datahistory History) interface{} {
+	return atdb.InsertOneDoc(mconn, collname, datahistory)
+}
+
+func GetAllClaimsSalon(mconn *mongo.Database, collname string) []History {
+	history := atdb.GetAllDoc[[]History](mconn, collname)
+	return history
+}
+func ClaimsExists(mconn *mongo.Database, collname string, salonName string) bool {
+	filter := bson.M{"salon.name": salonName}
+	var history History
+	err := mconn.Collection(collname).FindOne(context.Background(), filter).Decode(&history)
+	return err == nil
+}
+
+// Fungsi untuk mendapatkan data dari database
+func RetrieveDataFromDatabase(mconn *mongo.Database, collname string) []History {
+	// Tentukan filter kosong jika Anda ingin mengambil semua dokumen
+	filter := bson.M{}
+
+	// Tentukan opsi untuk kueri, misalnya batasan atau urutan
+	options := options.Find()
+
+	// Lakukan kueri ke koleksi yang diberikan dengan filter dan opsi yang ditentukan
+	cursor, err := mconn.Collection(collname).Find(context.Background(), filter, options)
+	if err != nil {
+		// Handle kesalahan jika ada
+		// Contoh: log pesan kesalahan atau kembalikan data kosong
+		log.Println("Error querying database:", err)
+		return []History{}
+	}
+	defer cursor.Close(context.Background())
+
+	// Iterasi melalui hasil kueri
+	var data []History
+	for cursor.Next(context.Background()) {
+		var history History
+		if err := cursor.Decode(&history); err != nil {
+			// Handle kesalahan jika ada saat mem-parsing hasil kueri
+			// Contoh: log pesan kesalahan atau lanjutkan ke dokumen berikutnya
+			log.Println("Error decoding document:", err)
+			continue
+		}
+		// Tambahkan data ke slice data
+		data = append(data, history)
+	}
+
+	if err := cursor.Err(); err != nil {
+		// Handle kesalahan jika ada saat iterasi melalui hasil kueri
+		// Contoh: log pesan kesalahan atau kembalikan data kosong
+		log.Println("Error iterating over query results:", err)
+		return []History{}
+	}
+
+	// Kembalikan data yang ditemukan
+	return data
 }
