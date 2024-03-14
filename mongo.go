@@ -191,12 +191,9 @@ func ClaimsExists(mconn *mongo.Database, collname string, salonName string) bool
 	return err == nil
 }
 
-// Fungsi untuk mendapatkan data dari database
 func RetrieveDataFromDatabase(mconn *mongo.Database, collname string) []History {
-	// Tentukan filter kosong jika Anda ingin mengambil semua dokumen
 	filter := bson.M{}
 
-	// Tentukan opsi untuk kueri, misalnya batasan atau urutan
 	options := options.Find()
 
 	// Lakukan kueri ke koleksi yang diberikan dengan filter dan opsi yang ditentukan
