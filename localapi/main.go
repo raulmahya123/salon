@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	kursussalon "github.com/E-Katalog-Film/backend"
+	kursussalon "github.com/raulmahya123/salon"
 )
 
 func AuthorizationAPI(w http.ResponseWriter, r *http.Request) {

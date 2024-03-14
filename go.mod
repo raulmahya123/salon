@@ -1,4 +1,4 @@
-module github.com/E-Katalog-Film/backend
+module github.com/raulmahya123/salon
 
 go 1.19
 
