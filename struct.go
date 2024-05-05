@@ -75,15 +75,6 @@ type Certificate struct {
 	Ttd              string `json:"ttd" bson:"ttd"`
 }
 
-type Blog struct {
-	ID      string `json:"id" bson:"id"`
-	Title   string `json:"title" bson:"title"`
-	Author  string `json:"author" bson:"author"`
-	Content string `json:"content" bson:"content"`
-	Status  bool   `json:"status" bson:"status"`
-	Image   string `json:"image" bson:"image"`
-}
-
 type Response struct {
 	Status  bool        `json:"status" bson:"status"`
 	Message string      `json:"message" bson:"message"`
@@ -131,4 +122,17 @@ type Comment struct {
 	Questions string `json:"questions" bson:"questions"`
 	Tanggal   string `json:"tanggal" bson:"tanggal"`
 	Status    bool   `json:"status" bson:"status"`
+}
+
+type Blog struct {
+	ID                int    `json:"id" bson:"id"`
+	Content           string `json:"content_one" bson:"content_one"`
+	Content_two       string `json:"content_two" bson:"content_two"`
+	Image             string `json:"image" bson:"image"`
+	Title             string `json:"title" bson:"title"`
+	Title_two         string `json:"title_two" bson:"title_two"`
+	Description       string `json:"description" bson:"description"`
+	Description_twoo  string `json:"description_two" bson:"description_two"`
+	Description_three string `json:"description_3" bson:"description_3"`
+	Status            bool   `json:"status" bson:"status"`
 }
