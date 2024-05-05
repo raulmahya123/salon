@@ -233,3 +233,22 @@ func RetrieveDataFromDatabase(mconn *mongo.Database, collname string) []History 
 	// Kembalikan data yang ditemukan
 	return data
 }
+
+func InsertContent(mconn *mongo.Database, collname string, datacontent Content) interface{} {
+	return atdb.InsertOneDoc(mconn, collname, datacontent)
+}
+
+func FindallContent(mconn *mongo.Database, collname string) []Content {
+	content := atdb.GetAllDoc[[]Content](mconn, collname)
+	return content
+}
+
+func UpdatedContent(mconn *mongo.Database, collname string, datacontent Content) interface{} {
+	filter := bson.M{"id": datacontent.ID}
+	return atdb.ReplaceOneDoc(mconn, collname, filter, datacontent)
+}
+
+func DeleteContent(mconn *mongo.Database, collname string, datacontent Content) interface{} {
+	filter := bson.M{"id": datacontent.ID}
+	return atdb.DeleteOneDoc(mconn, collname, filter)
+}

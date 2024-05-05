@@ -103,3 +103,32 @@ type History struct {
 	Salon       []Salon            `json:"salon" bson:"salon"`
 	Certificate []Certificate      `json:"certificate" bson:"certificate"`
 }
+
+type Product struct {
+	ID          primitive.ObjectID `bson:"_id,omitempty" `
+	Nomorid     int                `json:"nomorid" bson:"nomorid"`
+	Name        string             `json:"name" bson:"name"`
+	Description string             `json:"description" bson:"description"`
+	Price       int                `json:"price" bson:"price"`
+	Stock       int                `json:"stock" bson:"stock"`
+	Size        string             `json:"size" bson:"size"`
+	Image       string             `json:"image" bson:"image"`
+	Status      string             `json:"status" bson:"status"`
+}
+
+type Content struct {
+	ID          int    `json:"id" bson:"id" `
+	Content     string `json:"content" bson:"content"`
+	Image       string `json:"image" bson:"image"`
+	Description string `json:"description" bson:"description"`
+	Status      bool   `json:"status" bson:"status"`
+}
+
+type Comment struct {
+	ID        int    `json:"id" bson:"id"`
+	Username  string `json:"username" bson:"username"`
+	Answer    string `json:"comment" bson:"comment"`
+	Questions string `json:"questions" bson:"questions"`
+	Tanggal   string `json:"tanggal" bson:"tanggal"`
+	Status    bool   `json:"status" bson:"status"`
+}

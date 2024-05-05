@@ -1018,3 +1018,72 @@ func GetClaimsSalon(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname 
 	response.Data = history
 	return ReturnStruct(response)
 }
+
+//
+
+func AddedContent(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	var content Content
+	err := json.NewDecoder(r.Body).Decode(&content)
+
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return ReturnStruct(response)
+	}
+
+	InsertContent(mconn, collname, content)
+	response.Status = true
+	response.Message = "Berhasil input data"
+
+	return ReturnStruct(response)
+}
+
+func FindContent(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	datafilm := FindallContent(mconn, collname)
+	var response Pesan
+	response.Status = true
+	response.Message = "Berhasil ambil data"
+	response.Data = datafilm
+	return ReturnStruct(response)
+}
+
+func UpdateContent(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	var content Content
+	err := json.NewDecoder(r.Body).Decode(&content)
+
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return ReturnStruct(response)
+	}
+
+	UpdatedContent(mconn, collname, content)
+
+	response.Status = true
+	response.Message = "Berhasil update " + content.Content + " dari database"
+	return ReturnStruct(response)
+}
+
+func DeleteContentt(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	var content Content
+	err := json.NewDecoder(r.Body).Decode(&content)
+
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return ReturnStruct(response)
+	}
+
+	DeleteContent(mconn, collname, content)
+	response.Status = true
+	response.Message = "Berhasil hapus data"
+
+	return ReturnStruct(response)
+}
