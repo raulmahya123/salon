@@ -282,11 +282,11 @@ func FindallProduct(mconn *mongo.Database, collname string) []Productt {
 }
 
 func UpdatedProduct(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
-	filter := bson.M{"id": dataproduct.ID}
+	filter := bson.M{"nomorid": dataproduct.Nomorid}
 	return atdb.ReplaceOneDoc(mconn, collname, filter, dataproduct)
 }
 
 func DeleteProductt(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
-	filter := bson.M{"id": dataproduct.ID}
+	filter := bson.M{"nomorid": dataproduct.Nomorid}
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
