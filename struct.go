@@ -96,7 +96,7 @@ type History struct {
 }
 
 type Product struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty" `
+	ID          primitive.ObjectID `json:"id" bson:"id"`
 	Nomorid     int                `json:"nomorid" bson:"nomorid"`
 	Name        string             `json:"name" bson:"name"`
 	Description string             `json:"description" bson:"description"`
