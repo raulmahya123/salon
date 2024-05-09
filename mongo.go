@@ -252,3 +252,41 @@ func DeleteContent(mconn *mongo.Database, collname string, datacontent Content) 
 	filter := bson.M{"id": datacontent.ID}
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
+
+func InsertComment(mconn *mongo.Database, collname string, datacomment Comment) interface{} {
+	return atdb.InsertOneDoc(mconn, collname, datacomment)
+}
+
+func FindallComment(mconn *mongo.Database, collname string) []Comment {
+	comment := atdb.GetAllDoc[[]Comment](mconn, collname)
+	return comment
+}
+
+func UpdatedComment(mconn *mongo.Database, collname string, datacomment Comment) interface{} {
+	filter := bson.M{"id": datacomment.ID}
+	return atdb.ReplaceOneDoc(mconn, collname, filter, datacomment)
+}
+
+func DeleteComment(mconn *mongo.Database, collname string, datacomment Comment) interface{} {
+	filter := bson.M{"id": datacomment.ID}
+	return atdb.DeleteOneDoc(mconn, collname, filter)
+}
+
+func InsertProduct(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
+	return atdb.InsertOneDoc(mconn, collname, dataproduct)
+}
+
+func FindallProduct(mconn *mongo.Database, collname string) []Product {
+	product := atdb.GetAllDoc[[]Product](mconn, collname)
+	return product
+}
+
+func UpdatedProduct(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
+	filter := bson.M{"id": dataproduct.ID}
+	return atdb.ReplaceOneDoc(mconn, collname, filter, dataproduct)
+}
+
+func DeleteProductt(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
+	filter := bson.M{"id": dataproduct.ID}
+	return atdb.DeleteOneDoc(mconn, collname, filter)
+}
