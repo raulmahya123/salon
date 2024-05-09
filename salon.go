@@ -835,7 +835,7 @@ func FindProduct(mongoenvkatalogfilm, dbname, collname string, r *http.Request) 
 	datafilm := FindallProduct(mconn, collname)
 	var response Pesan
 	response.Status = true
-	response.Message = "Berhasil ambil data"
+	response.Message = "Berhasil ambil data product"
 	response.Data = datafilm
 	return ReturnStruct(response)
 }

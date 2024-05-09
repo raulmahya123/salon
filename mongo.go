@@ -276,9 +276,9 @@ func InsertProduct(mconn *mongo.Database, collname string, dataproduct Product) 
 	return atdb.InsertOneDoc(mconn, collname, dataproduct)
 }
 
-func FindallProduct(mconn *mongo.Database, collname string) []Product {
-	product := atdb.GetAllDoc[[]Product](mconn, collname)
-	return product
+func FindallProduct(mconn *mongo.Database, collname string) []Productt {
+	content := atdb.GetAllDoc[[]Productt](mconn, collname)
+	return content
 }
 
 func UpdatedProduct(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
