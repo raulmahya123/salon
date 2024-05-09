@@ -21,6 +21,20 @@ func AuthorizationAPI(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, kursussalon.Authorization("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "user", r))
 }
 
+func FindProductAPI(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,Token")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	fmt.Fprintf(w, kursussalon.FindProduct("mongoenv", "petapedia", "product", r))
+}
+
 func RegistrasiAPI(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -324,6 +338,7 @@ func handlerRequests() {
 	http.HandleFunc("/GetallQuestionAndAnswer", GetallQuestionAndAnswer)
 	http.HandleFunc("/DeleteQuestionAndAnswer", DeleteQuestionAndAnswer)
 	http.HandleFunc("/ClaimsSalon", ClaimsSalon)
+	http.HandleFunc("/FindProductAPI", FindProductAPI)
 
 	http.HandleFunc("/ClaimsCertificate", ClaimsCertificate)
 
