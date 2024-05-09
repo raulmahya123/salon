@@ -844,7 +844,7 @@ func AddedProduct(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname st
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
-	var product Product
+	var product Productt
 	err := json.NewDecoder(r.Body).Decode(&product)
 
 	if err != nil {
@@ -886,7 +886,7 @@ func UpdateProduct(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname s
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
-	var product Product
+	var product Productt
 	err := json.NewDecoder(r.Body).Decode(&product)
 
 	if err != nil {
@@ -929,7 +929,7 @@ func DeleteProduct(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname s
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
-	var product Product
+	var product Productt
 	err := json.NewDecoder(r.Body).Decode(&product)
 
 	if err != nil {
