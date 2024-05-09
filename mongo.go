@@ -272,7 +272,7 @@ func DeleteComment(mconn *mongo.Database, collname string, datacomment Comment) 
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
 
-func InsertProduct(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
+func InsertProduct(mconn *mongo.Database, collname string, dataproduct Productt) interface{} {
 	return atdb.InsertOneDoc(mconn, collname, dataproduct)
 }
 
@@ -281,12 +281,12 @@ func FindallProduct(mconn *mongo.Database, collname string) []Productt {
 	return content
 }
 
-func UpdatedProduct(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
+func UpdatedProduct(mconn *mongo.Database, collname string, dataproduct Productt) interface{} {
 	filter := bson.M{"nomorid": dataproduct.Nomorid}
 	return atdb.ReplaceOneDoc(mconn, collname, filter, dataproduct)
 }
 
-func DeleteProductt(mconn *mongo.Database, collname string, dataproduct Product) interface{} {
+func DeleteProductt(mconn *mongo.Database, collname string, dataproduct Productt) interface{} {
 	filter := bson.M{"nomorid": dataproduct.Nomorid}
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
