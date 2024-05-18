@@ -290,3 +290,8 @@ func DeleteProductt(mconn *mongo.Database, collname string, dataproduct Productt
 	filter := bson.M{"nomorid": dataproduct.Nomorid}
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
+
+func FindallUser(mconn *mongo.Database, collname string) []User {
+	user := atdb.GetAllDoc[[]User](mconn, collname)
+	return user
+}

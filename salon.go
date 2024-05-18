@@ -1292,3 +1292,13 @@ func GetClaimsSalon(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname 
 	response.Data = history
 	return ReturnStruct(response)
 }
+
+func GetUser(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	datafilm := FindallUser(mconn, collname)
+	var response Pesan
+	response.Status = true
+	response.Message = "Berhasil ambil data"
+	response.Data = datafilm
+	return ReturnStruct(response)
+}
