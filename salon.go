@@ -1181,7 +1181,7 @@ func AddedQuestionAnswerAndVidieo(publickeykatalogfilm, mongoenvkatalogfilm, dbn
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
-	var qas []QuestionAndAnswer
+	var qas []VidioQuestion
 	err := json.NewDecoder(r.Body).Decode(&qas)
 
 	if err != nil {
@@ -1224,7 +1224,7 @@ func AddedQuestionAnswerAndVidieo(publickeykatalogfilm, mongoenvkatalogfilm, dbn
 
 	// If all answers are correct, insert all questions and answers into the database
 	for _, qa := range qas {
-		InsertQuestionAndAnswer(mconn, collname, qa)
+		InsertQuestionAndAnswerVidieo(mconn, collname, qa)
 	}
 	// author ambil dari token name
 	response.Status = true
