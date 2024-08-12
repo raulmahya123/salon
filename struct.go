@@ -95,7 +95,7 @@ type VidioQuestion struct {
 	Answers       []string `json:"answers" bson:"answers"`
 	CorrectAnswer string   `json:"correct_answer" bson:"correct_answer"`
 	Status        bool     `json:"status" bson:"status"`
-	Salon         []string `json:"salon" bson:"salon"`
+	Video         []string `json:"video" bson:"video"`
 }
 
 type History struct {
