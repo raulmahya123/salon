@@ -150,6 +150,9 @@ func UpdatedBlog(mconn *mongo.Database, collname string, datablog Blog) interfac
 func InsertQuestionAndAnswer(mconn *mongo.Database, collname string, dataquestion QuestionAndAnswer) interface{} {
 	return atdb.InsertOneDoc(mconn, collname, dataquestion)
 }
+func InsertQuestionAndAnswerVidieo(mconn *mongo.Database, collname string, dataquestion VidioQuestion) interface{} {
+	return atdb.InsertOneDoc(mconn, collname, dataquestion)
+}
 
 func CheckAnswerdb(mconn *mongo.Database, collname string, dataquestion QuestionAndAnswer) QuestionAndAnswer {
 	filter := bson.M{"correct_answer": dataquestion.CorrectAnswer}

@@ -89,6 +89,15 @@ type QuestionAndAnswer struct {
 	Status        bool     `json:"status" bson:"status"`
 }
 
+type VidioQuestion struct {
+	ID            int      `json:"id" bson:"id"`
+	Question      string   `json:"question" bson:"question"`
+	Answers       []string `json:"answers" bson:"answers"`
+	CorrectAnswer string   `json:"correct_answer" bson:"correct_answer"`
+	Status        bool     `json:"status" bson:"status"`
+	Salon         []string `json:"salon" bson:"salon"`
+}
+
 type History struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id"`
 	Salon       []Salon            `json:"salon" bson:"salon"`

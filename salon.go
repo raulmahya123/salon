@@ -1176,6 +1176,62 @@ func UpdatedAnswer(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname s
 	return ReturnStruct(response)
 }
 
+// find answerd and video
+func AddedQuestionAnswerAndVidieo(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response Pesan
+	response.Status = false
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	var qas []QuestionAndAnswer
+	err := json.NewDecoder(r.Body).Decode(&qas)
+
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return ReturnStruct(response)
+	}
+
+	header := r.Header.Get("token")
+	if header == "" {
+		response.Message = "Header login tidak ditemukan"
+		return ReturnStruct(response)
+	}
+	tokenname := DecodeGetName(os.Getenv(publickeykatalogfilm), header)
+	tokenusername := DecodeGetUsername(os.Getenv(publickeykatalogfilm), header)
+	tokenrole := DecodeGetRole(os.Getenv(publickeykatalogfilm), header)
+	tokennomor := DecodeGetNomor(os.Getenv(publickeykatalogfilm), header)
+	log.Println("tokenname", tokenname)
+	if tokenname == "" || tokenusername == "" || tokenrole == "" || tokennomor == "" {
+		response.Message = "Hasil decode tidak ditemukan"
+		return ReturnStruct(response)
+	}
+
+	if !UsernameExists(mongoenvkatalogfilm, dbname, User{Username: tokenusername}) {
+		response.Message = "Akun tidak ditemukan"
+		return ReturnStruct(response)
+	}
+
+	if tokenrole != "user" && tokenrole != "admin" {
+		response.Message = "Anda tidak memiliki akses"
+		return ReturnStruct(response)
+	}
+
+	for _, qa := range qas {
+		// Validate each answer
+		if !checkAnswer(qa.Answers, qa.CorrectAnswer) {
+			response.Message = "Jawaban salah"
+			return ReturnStruct(response)
+		}
+	}
+
+	// If all answers are correct, insert all questions and answers into the database
+	for _, qa := range qas {
+		InsertQuestionAndAnswer(mconn, collname, qa)
+	}
+	// author ambil dari token name
+	response.Status = true
+	response.Message = "Berhasil input data"
+
+	return ReturnStruct(response)
+}
 func GetFindAll(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
 	datafilm := FindallQuestionAndAnswer(mconn, collname)
