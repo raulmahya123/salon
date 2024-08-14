@@ -216,7 +216,7 @@ func HapusUser(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 	return ReturnStruct(response)
 }
 
-func UpdatePassword(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func UpdatePassword(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)

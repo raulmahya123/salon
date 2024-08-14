@@ -110,7 +110,7 @@ func UpdatedPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, kursussalon.UpdatePassword("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "user", r))
+	fmt.Fprintf(w, kursussalon.UpdatePassword("mongoenvkatalogfilm", "katalogfilm", "user", r))
 }
 
 func CreateSalonAPI(w http.ResponseWriter, r *http.Request) {
