@@ -156,7 +156,7 @@ func AmbilSemuaUser(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname 
 	return ReturnStruct(datauser)
 }
 
-func UpdateUser(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func UpdateUser(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
@@ -165,30 +165,6 @@ func UpdateUser(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname stri
 
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
-		return ReturnStruct(response)
-	}
-
-	header := r.Header.Get("token")
-	if header == "" {
-		response.Message = "Header login tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	tokenusername := DecodeGetUsername(os.Getenv(publickeykatalogfilm), header)
-	tokenrole := DecodeGetRole(os.Getenv(publickeykatalogfilm), header)
-
-	if tokenusername == "" || tokenrole == "" {
-		response.Message = "Hasil decode tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if !UsernameExists(mongoenvkatalogfilm, dbname, User{Username: tokenusername}) {
-		response.Message = "Akun tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if tokenrole != "admin" {
-		response.Message = "Anda tidak memiliki akses"
 		return ReturnStruct(response)
 	}
 

@@ -84,7 +84,7 @@ func UpdateUserAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	fmt.Fprintf(w, kursussalon.UpdateUser("publickeykatalogfilm", "mongoenvkatalogfilm", "katalogfilm", "user", r))
+	fmt.Fprintf(w, kursussalon.UpdateUser("mongoenvkatalogfilm", "katalogfilm", "user", r))
 }
 
 func HapusUserAPI(w http.ResponseWriter, r *http.Request) {
