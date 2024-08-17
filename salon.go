@@ -2,6 +2,7 @@ package kursussalon
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -933,7 +934,7 @@ func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Reques
 
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
 
-	// Decode the request body into the VidioQuestion array
+	// Decode request body menjadi array VidioQuestion
 	var data []VidioQuestion
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -941,24 +942,23 @@ func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Reques
 		return ReturnStruct(response)
 	}
 
-	// Ensure data array is not empty
+	// Pastikan data array tidak kosong
 	if len(data) == 0 {
 		response.Message = "No questions provided"
 		return ReturnStruct(response)
 	}
 
-	// Extract the username and generate a random number for "Nomor"
+	// Ambil username dan generate nomor random untuk sertifikat
 	username := data[0].Username
 	response.UserDetails.Username = username
-	response.Nomor = GenerateRandomNumber() // Generate a random number for response
+	response.Nomor = GenerateRandomNumber()
 
-	generate := GenerateRandomNumber()
-	// Iterate over each question submitted by the user
+	// Iterasi setiap pertanyaan yang diajukan user
 	for _, userQuestion := range data {
-		// Retrieve the correct answer from the database for the current question
+		// Ambil jawaban yang benar dari database
 		questionFromDB := CheckAnswerdbVidio(mconn, collname, userQuestion)
 
-		// Check if the user's answer matches the correct answer
+		// Cek apakah jawaban user sesuai dengan jawaban yang benar
 		correct := false
 		for _, userAnswer := range userQuestion.Answers {
 			if userAnswer == questionFromDB.CorrectAnswer {
@@ -967,14 +967,14 @@ func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Reques
 			}
 		}
 
-		// Store the result for this question
+		// Simpan hasil untuk pertanyaan ini
 		detail := QuestionDetail{
 			QuestionID: userQuestion.Question,
 			IsCorrect:  correct,
 		}
 		response.Details = append(response.Details, detail)
 
-		// Update correct and incorrect counts
+		// Update correct dan incorrect counts
 		if correct {
 			response.CorrectCount++
 		} else {
@@ -982,19 +982,19 @@ func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Reques
 		}
 	}
 
-	// Determine the final status and message based on the correctness of the answers
-	if response.IncorrectCount == 0 {
+	// Tentukan status dan pesan akhir berdasarkan jawaban yang benar
+	if response.CorrectCount == len(data) {
 		response.Status = true
 		response.Message = "All answers are correct. Well done!"
 
-		// Generate a certificate for the user
-		certificate := GenerateCertificate(username, response.CorrectCount, len(data), generate)
+		// Generate sertifikat untuk user
+		certificate := GenerateCertificate(username, response.CorrectCount, len(data), response.Nomor)
 		response.Certificate = certificate
 	} else {
-		response.Message = "Some answers were incorrect. Please try again."
+		response.Message = fmt.Sprintf("Some answers were incorrect. You got %d out of %d correct. Please try again.", response.CorrectCount, len(data))
 	}
 
-	// Return the response as a JSON string
+	// Return response sebagai JSON string
 	return ReturnStruct(response)
 }
 

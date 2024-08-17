@@ -33,16 +33,17 @@ func GetAllUser(mconn *mongo.Database, collname string) []User {
 	return user
 }
 func GenerateCertificate(username string, correctCount int, totalQuestions int, nomorRandom string) string {
-	// Define your certificate format here
+	// Definisikan format sertifikat di sini
 	certificateContent := fmt.Sprintf(
 		"Certificate of Achievement\n\n"+
+			"Nomor Sertifikat: %s\n\n"+
 			"Congratulations, %s!\n"+
 			"You have successfully completed the quiz with a score of %d out of %d.\n"+
-			"Keep up the great work!",
-		username, correctCount, totalQuestions, nomorRandom)
+			"Your dedication and hard work have truly paid off!\n"+
+			"Keep up the great work and continue to strive for excellence.",
+		nomorRandom, username, correctCount, totalQuestions)
 
-	// For demonstration purposes, we'll just return the certificate content
-	// In a real application, you might generate a PDF or other document format
+	// Return the certificate content as a string
 	return certificateContent
 }
 
