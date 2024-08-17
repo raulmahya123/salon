@@ -153,6 +153,11 @@ func FindallQuestionAndAnswer(mconn *mongo.Database, collname string) []Question
 	return question
 }
 
+func FindallQuestionAndAnswerVideo(mconn *mongo.Database, collname string) []VidioQuestion {
+	question := atdb.GetAllDoc[[]VidioQuestion](mconn, collname)
+	return question
+}
+
 func UpdatedAnswerdb(mconn *mongo.Database, collname string, dataquestion QuestionAndAnswer) interface{} {
 	filter := bson.M{"id": dataquestion.ID}
 	return atdb.ReplaceOneDoc(mconn, collname, filter, dataquestion)

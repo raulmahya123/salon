@@ -1008,6 +1008,16 @@ func GetFindAll(mongoenvkatalogfilm, dbname, collname string, r *http.Request) s
 	return ReturnStruct(response)
 }
 
+func GetFindAllVideo(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	datafilm := FindallQuestionAndAnswerVideo(mconn, collname)
+	var response Pesan
+	response.Status = true
+	response.Message = "Berhasil ambil data"
+	response.Data = datafilm
+	return ReturnStruct(response)
+}
+
 func DeleteAnswer(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
