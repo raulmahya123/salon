@@ -142,6 +142,11 @@ func CheckAnswerdb(mconn *mongo.Database, collname string, dataquestion Question
 	return atdb.GetOneDoc[QuestionAndAnswer](mconn, collname, filter)
 }
 
+func CheckAnswerdbVidio(mconn *mongo.Database, collname string, dataquestion VidioQuestion) VidioQuestion {
+	filter := bson.M{"correct_answer": dataquestion.CorrectAnswer}
+	return atdb.GetOneDoc[VidioQuestion](mconn, collname, filter)
+}
+
 func FindallQuestionAndAnswer(mconn *mongo.Database, collname string) []QuestionAndAnswer {
 	question := atdb.GetAllDoc[[]QuestionAndAnswer](mconn, collname)
 	return question

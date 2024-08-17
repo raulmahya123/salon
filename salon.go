@@ -924,6 +924,79 @@ func AddedQuestionAnswerAndVidieo(publickeykatalogfilm, mongoenvkatalogfilm, dbn
 
 	return ReturnStruct(response)
 }
+func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+	var response PesanAnswer
+	response.Status = false
+	response.CorrectCount = 0
+	response.IncorrectCount = 0
+	response.Details = []QuestionDetail{}
+
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+
+	// Decode the request body into the VidioQuestion array
+	var data []VidioQuestion
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		response.Message = "Error parsing application/json: " + err.Error()
+		return ReturnStruct(response)
+	}
+
+	// Ensure data array is not empty
+	if len(data) == 0 {
+		response.Message = "No questions provided"
+		return ReturnStruct(response)
+	}
+
+	// Extract the username and generate a random number for "Nomor"
+	username := data[0].Username
+	response.UserDetails.Username = username
+	response.Nomor = GenerateRandomNumber() // Generate a random number for response
+
+	// Iterate over each question submitted by the user
+	for _, userQuestion := range data {
+		// Retrieve the correct answer from the database for the current question
+		questionFromDB := CheckAnswerdbVidio(mconn, collname, userQuestion)
+
+		// Check if the user's answer matches the correct answer
+		correct := false
+		for _, userAnswer := range userQuestion.Answers {
+			if userAnswer == questionFromDB.CorrectAnswer {
+				correct = true
+				break
+			}
+		}
+
+		// Store the result for this question
+		detail := QuestionDetail{
+			QuestionID: userQuestion.Question,
+			IsCorrect:  correct,
+		}
+		response.Details = append(response.Details, detail)
+
+		// Update correct and incorrect counts
+		if correct {
+			response.CorrectCount++
+		} else {
+			response.IncorrectCount++
+		}
+	}
+
+	// Determine the final status and message based on the correctness of the answers
+	if response.IncorrectCount == 0 {
+		response.Status = true
+		response.Message = "All answers are correct. Well done!"
+
+		// Generate a certificate for the user
+		certificate := GenerateCertificate(username, response.CorrectCount, len(data))
+		response.Certificate = certificate
+	} else {
+		response.Message = "Some answers were incorrect. Please try again."
+	}
+
+	// Return the response as a JSON string
+	return ReturnStruct(response)
+}
+
 func GetFindAll(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
 	datafilm := FindallQuestionAndAnswer(mconn, collname)

@@ -51,6 +51,7 @@ type PesanAnswer struct {
 	Details        []QuestionDetail `json:"details"`
 	UserDetails    User             `json:"user_details,omitempty"`
 	Certificate    string           `json:"certificate,omitempty"`
+	Nomor          string           `json:"nomor,omitempty"`
 }
 
 type Certificate struct {
@@ -97,6 +98,8 @@ type VidioQuestion struct {
 	Status        bool     `json:"status" bson:"status"`
 	Video         []string `json:"video" bson:"video"`
 	ContentID     []int    `json:"content_id" bson:"content_id"` // Added to link with AccessControl
+	Username      string   `json:"username"`
+	Nomor         string   `json:"nomor" bson:"nomor"`
 }
 
 type Content struct {
