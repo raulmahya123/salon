@@ -39,7 +39,7 @@ func GenerateCertificate(username string, correctCount int, totalQuestions int, 
 			"Congratulations, %s!\n"+
 			"You have successfully completed the quiz with a score of %d out of %d.\n"+
 			"Keep up the great work!",
-		username, correctCount, totalQuestions)
+		username, correctCount, totalQuestions, nomorRandom)
 
 	// For demonstration purposes, we'll just return the certificate content
 	// In a real application, you might generate a PDF or other document format
