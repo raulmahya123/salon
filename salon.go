@@ -952,8 +952,11 @@ func DeleteAnswer(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname st
 func GrantAccess(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
+
+	// Establish MongoDB connection
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
 
+	// Parse JSON request body to AccessControl struct
 	var access AccessControl
 	err := json.NewDecoder(r.Body).Decode(&access)
 	if err != nil {
@@ -961,11 +964,25 @@ func GrantAccess(mongoenvkatalogfilm, dbname, collname string, r *http.Request) 
 		return ReturnStruct(response)
 	}
 
-	// Insert access control to the database
-	err = InsertAccessControl(mconn, collname, access)
-	if err != nil {
-		response.Message = "Error inserting access control: " + err.Error()
+	// Ensure ContentID array is not empty
+	if len(access.ContentID) == 0 {
+		response.Message = "No content IDs provided"
 		return ReturnStruct(response)
+	}
+
+	// Insert access control entries into the database
+	for _, contentID := range access.ContentID {
+		entry := AccessControl{
+			Username:  access.Username,
+			ContentID: []int{contentID}, // Single content ID in array
+			HasAccess: access.HasAccess,
+		}
+
+		err = InsertAccessControl(mconn, collname, entry)
+		if err != nil {
+			response.Message = "Error inserting access control: " + err.Error()
+			return ReturnStruct(response)
+		}
 	}
 
 	response.Status = true
@@ -997,17 +1014,14 @@ func GetVideoWithAccessCheck(publickeykatalogfilm, mongoenvkatalogfilm, dbname, 
 		return ReturnStruct(response)
 	}
 
-	// Check access control
+	// Check if user has access to the content ID
 	hasAccess := CheckUserAccess(mconn, tokenusername, contentID)
 	if !hasAccess {
 		response.Message = "Anda tidak memiliki akses ke video ini"
 		return ReturnStruct(response)
 	}
 
-	// Convert contentID from int to string for FindVideoByID
-	contentIDStr = strconv.Itoa(contentID)
-
-	// If access is granted, return the video data
+	// Retrieve video data from the database
 	videoData, err := FindVideoByID(mconn, collname, contentIDStr)
 	if err != nil {
 		response.Message = "Error retrieving video data: " + err.Error()

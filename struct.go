@@ -71,7 +71,7 @@ type QuestionAndAnswer struct {
 
 type AccessControl struct {
 	Username  string `json:"username" bson:"username"`
-	ContentID int    `json:"content_id" bson:"content_id"`
+	ContentID []int  `json:"content_id" bson:"content_id"`
 	HasAccess bool   `json:"has_access" bson:"has_access"`
 }
 
@@ -82,6 +82,7 @@ type VidioQuestion struct {
 	CorrectAnswer string   `json:"correct_answer" bson:"correct_answer"`
 	Status        bool     `json:"status" bson:"status"`
 	Video         []string `json:"video" bson:"video"`
+	ContentID     []int    `json:"content_id" bson:"content_id"` // Added to link with AccessControl
 }
 
 type Content struct {
