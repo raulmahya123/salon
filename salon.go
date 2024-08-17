@@ -952,6 +952,7 @@ func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Reques
 	response.UserDetails.Username = username
 	response.Nomor = GenerateRandomNumber() // Generate a random number for response
 
+	generate := GenerateRandomNumber()
 	// Iterate over each question submitted by the user
 	for _, userQuestion := range data {
 		// Retrieve the correct answer from the database for the current question
@@ -987,7 +988,7 @@ func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Reques
 		response.Message = "All answers are correct. Well done!"
 
 		// Generate a certificate for the user
-		certificate := GenerateCertificate(username, response.CorrectCount, len(data), GenerateRandomNumber())
+		certificate := GenerateCertificate(username, response.CorrectCount, len(data), generate)
 		response.Certificate = certificate
 	} else {
 		response.Message = "Some answers were incorrect. Please try again."
