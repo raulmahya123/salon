@@ -213,11 +213,10 @@ func CheckUserAccess(mconn *mongo.Database, username string, contentID int) bool
 	}
 	return result.HasAccess
 }
-
-func FindVideoByID(mdb *mongo.Database, collname string, contentID string) (VidioQuestion, error) {
+func FindVideoByID(mdb *mongo.Database, collname string, contentID int) (VidioQuestion, error) {
 	collection := mdb.Collection(collname)
 
-	// Create a filter to find the document
+	// Create a filter to find the document where contentID is part of the ContentID array
 	filter := bson.M{"content_id": contentID}
 
 	// Find the document

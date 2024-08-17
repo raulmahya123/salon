@@ -1022,7 +1022,7 @@ func GetVideoWithAccessCheck(publickeykatalogfilm, mongoenvkatalogfilm, dbname, 
 	}
 
 	// Retrieve video data from the database
-	videoData, err := FindVideoByID(mconn, collname, contentIDStr)
+	videoData, err := FindVideoByID(mconn, collname, contentID)
 	if err != nil {
 		response.Message = "Error retrieving video data: " + err.Error()
 		return ReturnStruct(response)
