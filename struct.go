@@ -43,6 +43,13 @@ type Pesan struct {
 	Token   string      `json:"token,omitempty" bson:"token,omitempty"`
 	Nomor   string      `json:"nomor,omitempty" bson:"nomor,omitempty"`
 }
+type PesanAnswer struct {
+	Status         bool             `json:"status"`
+	Message        string           `json:"message"`
+	CorrectCount   int              `json:"correct_count"`
+	IncorrectCount int              `json:"incorrect_count"`
+	Details        []QuestionDetail `json:"details"`
+}
 
 type Certificate struct {
 	Nama             string `json:"nama" bson:"nama"`
@@ -69,6 +76,10 @@ type QuestionAndAnswer struct {
 	Status        bool     `json:"status" bson:"status"`
 }
 
+type QuestionDetail struct {
+	QuestionID string `json:"question_id"`
+	IsCorrect  bool   `json:"is_correct"`
+}
 type AccessControl struct {
 	Username  string `json:"username" bson:"username"`
 	ContentID []int  `json:"content_id" bson:"content_id"`

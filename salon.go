@@ -760,8 +760,12 @@ func checkAnswers(answers []string, correctAnswers []string) bool {
 }
 
 func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
-	var response Pesan
+	var response PesanAnswer
 	response.Status = false
+	response.CorrectCount = 0
+	response.IncorrectCount = 0
+	response.Details = []QuestionDetail{}
+
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
 	var data []QuestionAndAnswer
 	err := json.NewDecoder(r.Body).Decode(&data)
@@ -784,16 +788,28 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 			}
 		}
 
-		// If none of the user's answers match the correct answer, set response accordingly and return
-		if !correct {
-			response.Message = "Jawaban salah"
-			return ReturnStruct(response)
+		// Store the result for this question
+		detail := QuestionDetail{
+			QuestionID: userQuestion.CorrectAnswer,
+			IsCorrect:  correct,
+		}
+		response.Details = append(response.Details, detail)
+
+		if correct {
+			response.CorrectCount++
+		} else {
+			response.IncorrectCount++
 		}
 	}
 
-	// If at least one user answer matched a correct answer for each question, set response accordingly
-	response.Status = true
-	response.Message = "Jawaban benar"
+	// If all questions were answered correctly, set response status to true
+	if response.IncorrectCount == 0 {
+		response.Status = true
+		response.Message = "Jawaban benar"
+	} else {
+		response.Message = "Jawaban salah"
+	}
+
 	return ReturnStruct(response)
 }
 
