@@ -765,29 +765,25 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 	response.IncorrectCount = 0
 	response.Details = []QuestionDetail{}
 
-	mconn := SetConnection(mongoenvkatalogfilm, dbname)
-
-	// Structure for receiving user information along with the questions
-	var requestData struct {
+	// Structure to hold the full request body
+	var requestBody struct {
 		User      User                `json:"user"`
 		Questions []QuestionAndAnswer `json:"questions"`
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&requestData)
+	// Decode the request body into the requestBody structure
+	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
 		return ReturnStruct(response)
 	}
 
 	// Iterate over each question and check its answers
-	for _, userQuestion := range requestData.Questions {
-		// Retrieve the corresponding question and its correct answers from the database
-		question := CheckAnswerdb(mconn, collname, userQuestion)
-
-		// Check if any of the user's answers match the correct answer for this question
+	for _, userQuestion := range requestBody.Questions {
+		// Check if the user's answer matches the correct answer
 		correct := false
 		for _, userAnswer := range userQuestion.Answers {
-			if userAnswer == string(question.CorrectAnswer) {
+			if userAnswer == userQuestion.CorrectAnswer {
 				correct = true
 				break
 			}
@@ -811,12 +807,9 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 	if response.IncorrectCount == 0 {
 		response.Status = true
 		response.Message = "Jawaban benar"
-		// Include user details from the request in the response
-		response.UserDetails = requestData.User
-
 		// Generate certificate
-		certificate := GenerateCertificate(requestData.User.Username, response.CorrectCount, len(requestData.Questions))
-		response.Certificate = certificate // Add Certificate field to PesanAnswer
+		certificate := GenerateCertificate(requestBody.User.Name, response.CorrectCount, len(requestBody.Questions))
+		response.Certificate = certificate
 	} else {
 		response.Message = "Jawaban salah"
 	}
