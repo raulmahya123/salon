@@ -2,13 +2,13 @@ package kursussalon
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/aiteung/atdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func SetConnection(mongoenvkatalogfilm, dbname string) *mongo.Database {
@@ -74,29 +74,10 @@ func DeleteUser(mconn *mongo.Database, collname string, userdata User) interface
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
 
-//forgot password
-
-func ForgotPassword(mconn *mongo.Database, collname string, userdata User) interface{} {
-	filter := bson.M{"password": userdata.Password}
-	return atdb.ReplaceOneDoc(mconn, collname, filter, userdata)
-}
-
-// find all salon
-func FindallSalon(mconn *mongo.Database, collname string) []Salon {
-	salon := atdb.GetAllDoc[[]Salon](mconn, collname)
-	return salon
-}
-
 // find all sertificate
 func FindallCertificate(mconn *mongo.Database, collname string) []Certificate {
 	certificate := atdb.GetAllDoc[[]Certificate](mconn, collname)
 	return certificate
-}
-
-// insert salon
-
-func InsertSalon(mconn *mongo.Database, collname string, datasalon Salon) interface{} {
-	return atdb.InsertOneDoc(mconn, collname, datasalon)
 }
 
 // insert certificate
@@ -111,16 +92,6 @@ func CreateResponse(status bool, message string, data interface{}) Response {
 		Data:    data,
 	}
 	return response
-}
-
-func UpdatedSalon(mconn *mongo.Database, collname string, datasalon Salon) interface{} {
-	filter := bson.M{"id": datasalon.ID}
-	return atdb.ReplaceOneDoc(mconn, collname, filter, datasalon)
-}
-
-func DeletedSalon(mconn *mongo.Database, collname string, datasalon Salon) interface{} {
-	filter := bson.M{"id": datasalon.ID}
-	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
 
 func InsertBlog(mconn *mongo.Database, collname string, datablog Blog) interface{} {
@@ -174,69 +145,6 @@ func DeleteAnswerdb(mconn *mongo.Database, collname string, dataquestion Questio
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
 
-func FindallHistorySalon(mconn *mongo.Database, collname string) []History {
-	history := atdb.GetAllDoc[[]History](mconn, collname)
-	return history
-}
-
-func ClaimsSalondb(mconn *mongo.Database, collname string, datahistory History) interface{} {
-	return atdb.InsertOneDoc(mconn, collname, datahistory)
-}
-
-func GetAllClaimsSalon(mconn *mongo.Database, collname string) []History {
-	history := atdb.GetAllDoc[[]History](mconn, collname)
-	return history
-}
-func ClaimsExists(mconn *mongo.Database, collname string, salonName string) bool {
-	filter := bson.M{"salon.name": salonName}
-	var history History
-	err := mconn.Collection(collname).FindOne(context.Background(), filter).Decode(&history)
-	return err == nil
-}
-
-// Fungsi untuk mendapatkan data dari database
-func RetrieveDataFromDatabase(mconn *mongo.Database, collname string) []History {
-	// Tentukan filter kosong jika Anda ingin mengambil semua dokumen
-	filter := bson.M{}
-
-	// Tentukan opsi untuk kueri, misalnya batasan atau urutan
-	options := options.Find()
-
-	// Lakukan kueri ke koleksi yang diberikan dengan filter dan opsi yang ditentukan
-	cursor, err := mconn.Collection(collname).Find(context.Background(), filter, options)
-	if err != nil {
-		// Handle kesalahan jika ada
-		// Contoh: log pesan kesalahan atau kembalikan data kosong
-		log.Println("Error querying database:", err)
-		return []History{}
-	}
-	defer cursor.Close(context.Background())
-
-	// Iterasi melalui hasil kueri
-	var data []History
-	for cursor.Next(context.Background()) {
-		var history History
-		if err := cursor.Decode(&history); err != nil {
-			// Handle kesalahan jika ada saat mem-parsing hasil kueri
-			// Contoh: log pesan kesalahan atau lanjutkan ke dokumen berikutnya
-			log.Println("Error decoding document:", err)
-			continue
-		}
-		// Tambahkan data ke slice data
-		data = append(data, history)
-	}
-
-	if err := cursor.Err(); err != nil {
-		// Handle kesalahan jika ada saat iterasi melalui hasil kueri
-		// Contoh: log pesan kesalahan atau kembalikan data kosong
-		log.Println("Error iterating over query results:", err)
-		return []History{}
-	}
-
-	// Kembalikan data yang ditemukan
-	return data
-}
-
 func InsertContent(mconn *mongo.Database, collname string, datacontent Content) interface{} {
 	return atdb.InsertOneDoc(mconn, collname, datacontent)
 }
@@ -274,27 +182,63 @@ func DeleteComment(mconn *mongo.Database, collname string, datacomment Comment) 
 	filter := bson.M{"id": datacomment.ID}
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
+func InsertAccessControl(mconn *mongo.Database, collname string, access AccessControl) error {
+	collection := mconn.Collection(collname)
 
-func InsertProduct(mconn *mongo.Database, collname string, dataproduct Productt) interface{} {
-	return atdb.InsertOneDoc(mconn, collname, dataproduct)
+	// Create the access control record
+	accessRecord := bson.M{
+		"username":   access.Username,
+		"content_id": access.ContentID,
+		"has_access": access.HasAccess,
+	}
+
+	// Insert the record into the database
+	_, err := collection.InsertOne(context.Background(), accessRecord)
+	if err != nil {
+		return fmt.Errorf("error inserting access control: %v", err)
+	}
+
+	return nil
+}
+func CheckUserAccess(mdb *mongo.Database, username string, contentID string) bool {
+	collection := mdb.Collection("access_control")
+
+	// Create a filter to find the document
+	filter := bson.M{
+		"username":   username,
+		"content_id": contentID,
+		"has_access": true,
+	}
+
+	// Find a matching document
+	var result AccessControl
+	err := collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return false // No access record found
+		}
+		log.Printf("Error checking user access: %v", err)
+		return false
+	}
+
+	return result.HasAccess
 }
 
-func FindallProduct(mconn *mongo.Database, collname string) []Productt {
-	content := atdb.GetAllDoc[[]Productt](mconn, collname)
-	return content
-}
+func FindVideoByID(mdb *mongo.Database, collname string, contentID string) (VidioQuestion, error) {
+	collection := mdb.Collection(collname)
 
-func UpdatedProduct(mconn *mongo.Database, collname string, dataproduct Productt) interface{} {
-	filter := bson.M{"nomorid": dataproduct.Nomorid}
-	return atdb.ReplaceOneDoc(mconn, collname, filter, dataproduct)
-}
+	// Create a filter to find the document
+	filter := bson.M{"id": contentID}
 
-func DeleteProductt(mconn *mongo.Database, collname string, dataproduct Productt) interface{} {
-	filter := bson.M{"nomorid": dataproduct.Nomorid}
-	return atdb.DeleteOneDoc(mconn, collname, filter)
-}
+	// Find the document
+	var video VidioQuestion
+	err := collection.FindOne(context.Background(), filter).Decode(&video)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return VidioQuestion{}, fmt.Errorf("video not found")
+		}
+		return VidioQuestion{}, fmt.Errorf("error retrieving video data: %v", err)
+	}
 
-func FindallUser(mconn *mongo.Database, collname string) []User {
-	user := atdb.GetAllDoc[[]User](mconn, collname)
-	return user
+	return video, nil
 }
