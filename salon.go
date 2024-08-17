@@ -949,7 +949,7 @@ func DeleteAnswer(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname st
 	return ReturnStruct(response)
 }
 
-func GrantAccess(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func GrantAccess(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
@@ -958,14 +958,6 @@ func GrantAccess(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname str
 	err := json.NewDecoder(r.Body).Decode(&access)
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
-		return ReturnStruct(response)
-	}
-
-	header := r.Header.Get("token")
-	tokenrole := DecodeGetRole(os.Getenv(publickeykatalogfilm), header)
-
-	if tokenrole != "admin" {
-		response.Message = "Anda tidak memiliki akses"
 		return ReturnStruct(response)
 	}
 
