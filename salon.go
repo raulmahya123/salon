@@ -1014,13 +1014,6 @@ func GetVideoWithAccessCheck(publickeykatalogfilm, mongoenvkatalogfilm, dbname, 
 		return ReturnStruct(response)
 	}
 
-	// Check if user has access to the content ID
-	hasAccess := CheckUserAccess(mconn, tokenusername, contentID)
-	if !hasAccess {
-		response.Message = "Anda tidak memiliki akses ke video ini"
-		return ReturnStruct(response)
-	}
-
 	// Retrieve video data from the database
 	videoData, err := FindVideoByID(mconn, collname, contentID)
 	if err != nil {
