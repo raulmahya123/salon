@@ -814,7 +814,7 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 		response.Message = "Jawaban benar"
 
 		// Generate certificate
-		certificate := GenerateCertificate(username, response.CorrectCount, len(data))
+		certificate := GenerateCertificate(username, response.CorrectCount, len(data), GenerateRandomNumber())
 		response.Certificate = certificate // Add Certificate field to PesanAnswer
 	} else {
 		response.Message = "Jawaban salah"
@@ -987,7 +987,7 @@ func CekAnswerVidio(mongoenvkatalogfilm, dbname, collname string, r *http.Reques
 		response.Message = "All answers are correct. Well done!"
 
 		// Generate a certificate for the user
-		certificate := GenerateCertificate(username, response.CorrectCount, len(data))
+		certificate := GenerateCertificate(username, response.CorrectCount, len(data), GenerateRandomNumber())
 		response.Certificate = certificate
 	} else {
 		response.Message = "Some answers were incorrect. Please try again."
