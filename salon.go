@@ -766,15 +766,21 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 	response.Details = []QuestionDetail{}
 
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
-	var data []QuestionAndAnswer
-	err := json.NewDecoder(r.Body).Decode(&data)
+
+	// Structure for receiving user information along with the questions
+	var requestData struct {
+		User      User                `json:"user"`
+		Questions []QuestionAndAnswer `json:"questions"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&requestData)
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
 		return ReturnStruct(response)
 	}
 
 	// Iterate over each question and check its answers
-	for _, userQuestion := range data {
+	for _, userQuestion := range requestData.Questions {
 		// Retrieve the corresponding question and its correct answers from the database
 		question := CheckAnswerdb(mconn, collname, userQuestion)
 
@@ -801,18 +807,15 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 		}
 	}
 
-	// Fetch user details if needed
-	userDetails := FindUser(mconn, collname, User{Username: "username"})
-
 	// Update the response based on whether all answers were correct or not
 	if response.IncorrectCount == 0 {
 		response.Status = true
 		response.Message = "Jawaban benar"
-		// Include user details in the response
-		response.UserDetails = userDetails
+		// Include user details from the request in the response
+		response.UserDetails = requestData.User
 
 		// Generate certificate
-		certificate := GenerateCertificate(userDetails.Username, response.CorrectCount, len(data))
+		certificate := GenerateCertificate(requestData.User.Username, response.CorrectCount, len(requestData.Questions))
 		response.Certificate = certificate // Add Certificate field to PesanAnswer
 	} else {
 		response.Message = "Jawaban salah"
