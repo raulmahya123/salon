@@ -760,8 +760,12 @@ func checkAnswers(answers []string, correctAnswers []string) bool {
 }
 
 func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
-	var response Pesan
+	var response PesanAnswer
 	response.Status = false
+	response.CorrectCount = 0
+	response.IncorrectCount = 0
+	response.Details = []QuestionDetail{}
+
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
 	var data []QuestionAndAnswer
 	err := json.NewDecoder(r.Body).Decode(&data)
@@ -784,21 +788,32 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 			}
 		}
 
-		// If none of the user's answers match the correct answer, set response accordingly and return
-		if !correct {
-			response.Message = "Jawaban salah"
-			return ReturnStruct(response)
+		// Store the result for this question
+		detail := QuestionDetail{
+			QuestionID: userQuestion.Question,
+			IsCorrect:  correct,
+		}
+		response.Details = append(response.Details, detail)
+
+		if correct {
+			response.CorrectCount++
+		} else {
+			response.IncorrectCount++
 		}
 	}
 
-	// munculkan username berdasarkan token
-	// author ambil dari token name
-	GetData := FindUser(mconn, "user", User{Username: "username"})
+	FindUser(mconn, collname, User{Username: "username"})
 
-	// If at least one user answer matched a correct answer for each question, set response accordingly
-	response.Status = true
-	response.Message = "Jawaban benar"
-	response.Data = GetData
+	// If all questions were answered correctly, set response status to true
+	if response.IncorrectCount == 0 {
+		response.Status = true
+		response.Message = "Jawaban benar"
+		response.Details = []QuestionDetail{}
+
+	} else {
+		response.Message = "Jawaban salah"
+	}
+
 	return ReturnStruct(response)
 }
 
@@ -1016,6 +1031,13 @@ func GetVideoWithAccessCheck(publickeykatalogfilm, mongoenvkatalogfilm, dbname, 
 	contentID, err := strconv.Atoi(contentIDStr)
 	if err != nil {
 		response.Message = "Invalid content ID format"
+		return ReturnStruct(response)
+	}
+
+	// Check if user has access to the content ID
+	hasAccess := CheckUserAccess(mconn, tokenusername, contentID)
+	if !hasAccess {
+		response.Message = "Anda tidak memiliki akses ke video ini"
 		return ReturnStruct(response)
 	}
 
