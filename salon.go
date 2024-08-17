@@ -765,25 +765,30 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 	response.IncorrectCount = 0
 	response.Details = []QuestionDetail{}
 
-	// Structure to hold the full request body
-	var requestBody struct {
-		User      User                `json:"user"`
-		Questions []QuestionAndAnswer `json:"questions"`
-	}
-
-	// Decode the request body into the requestBody structure
-	err := json.NewDecoder(r.Body).Decode(&requestBody)
+	mconn := SetConnection(mongoenvkatalogfilm, dbname)
+	var data []QuestionAndAnswer
+	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
 		return ReturnStruct(response)
 	}
 
+	// Extract username from the first question in the data array
+	var username string
+	if len(data) > 0 {
+		username = data[0].Username
+		response.UserDetails.Username = username // Populate the username in response
+	}
+
 	// Iterate over each question and check its answers
-	for _, userQuestion := range requestBody.Questions {
-		// Check if the user's answer matches the correct answer
+	for _, userQuestion := range data {
+		// Retrieve the corresponding question and its correct answers from the database
+		question := CheckAnswerdb(mconn, collname, userQuestion)
+
+		// Check if any of the user's answers match the correct answer for this question
 		correct := false
 		for _, userAnswer := range userQuestion.Answers {
-			if userAnswer == userQuestion.CorrectAnswer {
+			if userAnswer == string(question.CorrectAnswer) {
 				correct = true
 				break
 			}
@@ -807,9 +812,10 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 	if response.IncorrectCount == 0 {
 		response.Status = true
 		response.Message = "Jawaban benar"
+
 		// Generate certificate
-		certificate := GenerateCertificate(requestBody.User.Name, response.CorrectCount, len(requestBody.Questions))
-		response.Certificate = certificate
+		certificate := GenerateCertificate(username, response.CorrectCount, len(data))
+		response.Certificate = certificate // Add Certificate field to PesanAnswer
 	} else {
 		response.Message = "Jawaban salah"
 	}

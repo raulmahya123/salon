@@ -76,6 +76,7 @@ type QuestionAndAnswer struct {
 	Answers       []string `json:"answers" bson:"answers"`
 	CorrectAnswer string   `json:"correct_answer" bson:"correct_answer"`
 	Status        bool     `json:"status" bson:"status"`
+	Username      string   `json:"username"`
 }
 
 type QuestionDetail struct {
