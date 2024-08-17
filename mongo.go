@@ -218,7 +218,7 @@ func FindVideoByID(mdb *mongo.Database, collname string, contentID string) (Vidi
 	collection := mdb.Collection(collname)
 
 	// Create a filter to find the document
-	filter := bson.M{"id": contentID}
+	filter := bson.M{"content_id": contentID}
 
 	// Find the document
 	var video VidioQuestion
