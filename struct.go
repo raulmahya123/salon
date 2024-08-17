@@ -20,8 +20,8 @@ type User struct {
 	Password  string `json:"password" bson:"password"`
 	Role      string `json:"role" bson:"role"`
 	Nomor     string `json:"nomor" bson:"nomor"`
-	Ispaid    bool   `json:"ispaid" bson:"ispaid"`   // Menunjukkan apakah pengguna telah membayar
-	Hasaccess bool   `json:"payment" bson:"payment"` // Menunjukkan apakah akses telah diberikan oleh admi
+	Ispaid    bool   `json:"ispaid" bson:"ispaid"`       // Indicates whether the user has paid
+	Hasaccess bool   `json:"hasaccess" bson:"hasaccess"` // Indicates whether access has been granted by admin
 }
 
 type CredentialUser struct {
@@ -68,6 +68,7 @@ type QuestionAndAnswer struct {
 	CorrectAnswer string   `json:"correct_answer" bson:"correct_answer"`
 	Status        bool     `json:"status" bson:"status"`
 }
+
 type AccessControl struct {
 	Username  string `json:"username" bson:"username"`
 	ContentID int    `json:"content_id" bson:"content_id"`
@@ -84,7 +85,7 @@ type VidioQuestion struct {
 }
 
 type Content struct {
-	ID          int    `json:"id" bson:"id" `
+	ID          int    `json:"id" bson:"id"`
 	Content     string `json:"content" bson:"content"`
 	Image       string `json:"image" bson:"image"`
 	Description string `json:"description" bson:"description"`

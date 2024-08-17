@@ -3,7 +3,6 @@ package kursussalon
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/aiteung/atdb"
@@ -200,27 +199,18 @@ func InsertAccessControl(mconn *mongo.Database, collname string, access AccessCo
 
 	return nil
 }
-func CheckUserAccess(mdb *mongo.Database, username string, contentID string) bool {
-	collection := mdb.Collection("access_control")
-
-	// Create a filter to find the document
-	filter := bson.M{
-		"username":   username,
-		"content_id": contentID,
-		"has_access": true,
-	}
-
-	// Find a matching document
+func CheckUserAccess(mconn *mongo.Database, username string, contentID int) bool {
+	collection := mconn.Collection("access_control")
+	filter := bson.M{"username": username, "content_id": contentID}
 	var result AccessControl
 	err := collection.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return false // No access record found
+			return false // No access control record found
 		}
-		log.Printf("Error checking user access: %v", err)
+		// Handle other errors
 		return false
 	}
-
 	return result.HasAccess
 }
 

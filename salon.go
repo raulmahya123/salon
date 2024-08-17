@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func ReturnStruct(DataStuct any) string {
@@ -979,26 +980,43 @@ func GrantAccess(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname str
 	response.Message = "Akses diberikan"
 	return ReturnStruct(response)
 }
+
 func GetVideoWithAccessCheck(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
+
+	// Establish MongoDB connection
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
 
+	// Extract token from header and decode username
 	header := r.Header.Get("token")
 	tokenusername := DecodeGetUsername(os.Getenv(publickeykatalogfilm), header)
 
-	// Extract content ID from request parameters (ensure to replace this with actual extraction code)
-	contentID := r.URL.Query().Get("content_id")
+	if tokenusername == "" {
+		response.Message = "Token username tidak ditemukan"
+		return ReturnStruct(response)
+	}
+
+	// Extract content ID from request parameters
+	contentIDStr := r.URL.Query().Get("content_id")
+	contentID, err := strconv.Atoi(contentIDStr)
+	if err != nil {
+		response.Message = "Invalid content ID format"
+		return ReturnStruct(response)
+	}
 
 	// Check access control
-	hasAccess := CheckUserAccess(mconn, tokenusername, collname)
+	hasAccess := CheckUserAccess(mconn, tokenusername, contentID)
 	if !hasAccess {
 		response.Message = "Anda tidak memiliki akses ke video ini"
 		return ReturnStruct(response)
 	}
 
+	// Convert contentID from int to string for FindVideoByID
+	contentIDStr = strconv.Itoa(contentID)
+
 	// If access is granted, return the video data
-	videoData, err := FindVideoByID(mconn, collname, contentID)
+	videoData, err := FindVideoByID(mconn, collname, contentIDStr)
 	if err != nil {
 		response.Message = "Error retrieving video data: " + err.Error()
 		return ReturnStruct(response)
