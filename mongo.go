@@ -32,6 +32,19 @@ func GetAllUser(mconn *mongo.Database, collname string) []User {
 	user := atdb.GetAllDoc[[]User](mconn, collname)
 	return user
 }
+func GenerateCertificate(username string, correctCount int, totalQuestions int) string {
+	// Define your certificate format here
+	certificateContent := fmt.Sprintf(
+		"Certificate of Achievement\n\n"+
+			"Congratulations, %s!\n"+
+			"You have successfully completed the quiz with a score of %d out of %d.\n"+
+			"Keep up the great work!",
+		username, correctCount, totalQuestions)
+
+	// For demonstration purposes, we'll just return the certificate content
+	// In a real application, you might generate a PDF or other document format
+	return certificateContent
+}
 
 func FindUser(mconn *mongo.Database, collname string, userdata User) User {
 	filter := bson.M{"username": userdata.Username}

@@ -758,7 +758,6 @@ func checkAnswers(answers []string, correctAnswers []string) bool {
 	}
 	return true
 }
-
 func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response PesanAnswer
 	response.Status = false
@@ -802,14 +801,19 @@ func CekAnswer(mongoenvkatalogfilm, dbname, collname string, r *http.Request) st
 		}
 	}
 
-	FindUser(mconn, collname, User{Username: "username"})
+	// Fetch user details if needed
+	userDetails := FindUser(mconn, collname, User{Username: "username"})
 
-	// If all questions were answered correctly, set response status to true
+	// Update the response based on whether all answers were correct or not
 	if response.IncorrectCount == 0 {
 		response.Status = true
 		response.Message = "Jawaban benar"
-		response.Details = []QuestionDetail{}
+		// Include user details in the response
+		response.UserDetails = userDetails
 
+		// Generate certificate
+		certificate := GenerateCertificate(userDetails.Username, response.CorrectCount, len(data))
+		response.Certificate = certificate // Add Certificate field to PesanAnswer
 	} else {
 		response.Message = "Jawaban salah"
 	}

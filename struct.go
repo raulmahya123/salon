@@ -49,6 +49,8 @@ type PesanAnswer struct {
 	CorrectCount   int              `json:"correct_count"`
 	IncorrectCount int              `json:"incorrect_count"`
 	Details        []QuestionDetail `json:"details"`
+	UserDetails    User             `json:"user_details,omitempty"`
+	Certificate    string           `json:"certificate,omitempty"`
 }
 
 type Certificate struct {
