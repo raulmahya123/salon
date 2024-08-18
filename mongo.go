@@ -168,6 +168,16 @@ func DeleteAnswerdb(mconn *mongo.Database, collname string, dataquestion Questio
 	return atdb.DeleteOneDoc(mconn, collname, filter)
 }
 
+func UpdatedAnswerdbVidio(mconn *mongo.Database, collname string, dataquestion VidioQuestion) interface{} {
+	filter := bson.M{"id": dataquestion.ID}
+	return atdb.ReplaceOneDoc(mconn, collname, filter, dataquestion)
+}
+
+func DeleteAnswerdbVidio(mconn *mongo.Database, collname string, dataquestion VidioQuestion) interface{} {
+	filter := bson.M{"id": dataquestion.ID}
+	return atdb.DeleteOneDoc(mconn, collname, filter)
+}
+
 func InsertContent(mconn *mongo.Database, collname string, datacontent Content) interface{} {
 	return atdb.InsertOneDoc(mconn, collname, datacontent)
 }
