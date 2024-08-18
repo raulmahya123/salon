@@ -698,7 +698,7 @@ func DeleteAnswer(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname st
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
-	var user QuestionAndAnswer
+	var user []QuestionAndAnswer
 	err := json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
@@ -729,7 +729,9 @@ func DeleteAnswer(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname st
 		response.Message = "Anda tidak memiliki akses"
 		return ReturnStruct(response)
 	}
-	DeleteAnswerdb(mconn, collname, user)
+	for _, qa := range user {
+		DeleteAnswerdb(mconn, collname, qa)
+	}
 	response.Status = true
 	response.Message = "Berhasil hapus data"
 	return ReturnStruct(response)
