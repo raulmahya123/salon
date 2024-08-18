@@ -780,7 +780,7 @@ func UpdatedAnswerVidio(publickeykatalogfilm, mongoenvkatalogfilm, dbname, colln
 	return ReturnStruct(response)
 }
 
-func deleteAnswerVidio(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func DeleteAnswerVidio(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
