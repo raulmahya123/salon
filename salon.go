@@ -1050,7 +1050,7 @@ func DeletedBlog(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname str
 }
 
 // commment
-func AddedComment(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func AddedComment(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
@@ -1059,30 +1059,6 @@ func AddedComment(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname st
 
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
-		return ReturnStruct(response)
-	}
-
-	header := r.Header.Get("token")
-	if header == "" {
-		response.Message = "Header login tidak ditemukan"
-		return ReturnStruct(response)
-	}
-	tokenname := DecodeGetName(os.Getenv(publickeykatalogfilm), header)
-	tokenusername := DecodeGetUsername(os.Getenv(publickeykatalogfilm), header)
-	tokenrole := DecodeGetRole(os.Getenv(publickeykatalogfilm), header)
-	tokennomor := DecodeGetNomor(os.Getenv(publickeykatalogfilm), header)
-	if tokenname == "" || tokenusername == "" || tokenrole == "" || tokennomor == "" {
-		response.Message = "Hasil decode tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if !UsernameExists(mongoenvkatalogfilm, dbname, User{Username: tokenusername}) {
-		response.Message = "Akun tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if tokenrole != "user" && tokenrole != "admin" {
-		response.Message = "Anda tidak memiliki akses"
 		return ReturnStruct(response)
 	}
 	InsertComment(mconn, collname, comment)
@@ -1102,7 +1078,7 @@ func FindComment(mongoenvkatalogfilm, dbname, collname string, r *http.Request) 
 	return ReturnStruct(response)
 }
 
-func UpdateComment(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func UpdateComment(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
@@ -1111,30 +1087,6 @@ func UpdateComment(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname s
 
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
-		return ReturnStruct(response)
-	}
-
-	header := r.Header.Get("token")
-	if header == "" {
-		response.Message = "Header login tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	tokenusername := DecodeGetUsername(os.Getenv(publickeykatalogfilm), header)
-	tokenrole := DecodeGetRole(os.Getenv(publickeykatalogfilm), header)
-
-	if tokenusername == "" || tokenrole == "" {
-		response.Message = "Hasil decode tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if !UsernameExists(mongoenvkatalogfilm, dbname, User{Username: tokenusername}) {
-		response.Message = "Akun tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if tokenrole != "admin" {
-		response.Message = "Anda tidak memiliki akses"
 		return ReturnStruct(response)
 	}
 
@@ -1145,7 +1097,7 @@ func UpdateComment(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname s
 	return ReturnStruct(response)
 }
 
-func DeletedComment(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
+func DeletedComment(mongoenvkatalogfilm, dbname, collname string, r *http.Request) string {
 	var response Pesan
 	response.Status = false
 	mconn := SetConnection(mongoenvkatalogfilm, dbname)
@@ -1154,30 +1106,6 @@ func DeletedComment(publickeykatalogfilm, mongoenvkatalogfilm, dbname, collname 
 
 	if err != nil {
 		response.Message = "Error parsing application/json: " + err.Error()
-		return ReturnStruct(response)
-	}
-
-	header := r.Header.Get("token")
-	if header == "" {
-		response.Message = "Header login tidak ditemukan"
-		return ReturnStruct(response)
-	}
-	tokenname := DecodeGetName(os.Getenv(publickeykatalogfilm), header)
-	tokenusername := DecodeGetUsername(os.Getenv(publickeykatalogfilm), header)
-	tokenrole := DecodeGetRole(os.Getenv(publickeykatalogfilm), header)
-	tokennomor := DecodeGetNomor(os.Getenv(publickeykatalogfilm), header)
-	if tokenname == "" || tokenusername == "" || tokenrole == "" || tokennomor == "" {
-		response.Message = "Hasil decode tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if !UsernameExists(mongoenvkatalogfilm, dbname, User{Username: tokenusername}) {
-		response.Message = "Akun tidak ditemukan"
-		return ReturnStruct(response)
-	}
-
-	if tokenrole != "admin" {
-		response.Message = "Anda tidak memiliki akses"
 		return ReturnStruct(response)
 	}
 	DeleteComment(mconn, collname, comment)
